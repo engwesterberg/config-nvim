@@ -8,6 +8,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'leafgarland/typescript-vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'peitalin/vim-jsx-typescript'
+Plug 'mxw/vim-jsx'
 Plug 'eslint/eslint'
 Plug 'mattn/emmet-vim'
 Plug 'maxmellon/vim-jsx-pretty'
@@ -15,6 +16,7 @@ Plug 'lervag/vimtex'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 Plug 'itchyny/lightline.vim'
 Plug 'preservim/nerdcommenter'
+Plug 'tpope/vim-commentary'
 Plug 'KabbAmine/vCoolor.vim'
 Plug 'ap/vim-css-color'
 Plug 'w0rp/ale'
@@ -48,6 +50,13 @@ set scrolloff=10
 set modifiable
 set title
 set mouse=a
+set indentexpr=
+filetype on
+filetype plugin on
+filetype indent on
+
+"Current line hightlight
+highlight CursorLine guibg=#00802b ctermbg=234
 
 let mapleader = "\<Space>"
 let g:NERDTreeShowHidden = 1
@@ -90,6 +99,13 @@ vnoremap Q :norm @q<cr>
 nnoremap <silent> <Leader>+ :vertical resize -5<cr>
 nnoremap <silent> <Leader>- :vertical resize +5<cr>
 nnoremap <Leader><S-b> :B<CR> 
+"Paste and replace
+vnoremap <leader>p "
+"completetions
+
+"Enable saving with capitalized w
+cnoreabbrev <expr> W ((getcmdtype() is# ':' && getcmdline() is# 'W')?('w'):('W'))
+cnoreabbrev cs CocSearch
 
 "Remap escape in insert mode
 :imap jj <Esc>
@@ -127,4 +143,14 @@ function! Buffers()
     let buffer=input("Enter a buffer:") 
     execute "b" . buffer 
 endfunction
+
+function! s:check_back_space() abort
+	let col = col('.') - 1
+	return !col || getline('.')[col - 1] =~ '\s'
+endfunction
+
+inoremap <silent><expr> <Tab>
+	\ pumvisible() ? "\<C-n>" :
+	\ <SID>check_back_space() ? "\<Tab>" :
+	\ kite#completion#autocomplete()
 
